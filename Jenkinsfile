@@ -13,7 +13,7 @@ pipeline {
 
     stage('Checkout Source') {
       steps {
-      git branch: 'main', url: 'https://github.com/JimmyT96/nodeapp_test.git'
+      git branch: 'main', url: 'https://github.com/JimmyT96/Dockerized_nodeapp'
       }
     }
 
@@ -71,7 +71,7 @@ pipeline {
     stages {
         stage('Checkout Source') {
             steps {
-                git branch: 'main', url: 'https://github.com/JimmyT96/nodeapp_test.git'
+                git branch: 'main', url: 'https://github.com/JimmyT96/Dockerized_nodeapp'
             }
         }
 
