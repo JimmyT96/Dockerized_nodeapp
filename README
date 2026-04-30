@@ -1,69 +1,41 @@
-
 Node.js Express: Automated CI/CD on Amazon EKS
+
+First used a slim base image in 2023, now updated to node:24-slim.
+
 Project Overview
-This repository features a Node.js 24 (LTS) Express application integrated with an automated Jenkins CI/CD pipeline. The workflow ensures that every code change is automatically built, containerized using optimized Docker images, and deployed to a scalable Amazon EKS cluster.
+This repository features a Node.js 24 Express application integrated with an automated Jenkins CI/CD pipeline. The workflow ensures that every code change is automatically built, containerized using optimized Docker images, and deployed to a scalable Amazon EKS cluster.
 
 Tech Stack
-Runtime: Node.js 24 (LTS)
-
+Runtime: Node.js 24
 Framework: Express.js
-
 CI/CD: Jenkins (Declarative Pipeline)
-
-Containerization: Docker (node:24-slim)
-
-Orchestration: AWS EKS (Elastic Kubernetes Service)
+Containerization: Docker
+Orchestration: AWS EKS
+Image: jemimaht/nodeapp
 
 Deployment Instructions
-1. Local Setup
+Local Setup
 To run the application directly on your machine:
-
-Bash
-
 npm install
 node index.js
-The app will be accessible at http://localhost:3000.
+The app will be accessible at localhost:3000.
 
-2. Docker Execution
+Docker Execution
 The application is packaged using a slim base image and runs as a non-root user for stability.
+Build the production image: docker build -t nodeapp-prod:latest .
+Run the container (Mapped to Internal Port 3000): docker run -p 3000:3000 nodeapp-prod:latest
 
-Bash
-
-# Build the production image
-docker build -t nodeapp-prod:latest .
-
-# Run the container (Mapped to Internal Port 3000)
-docker run -p 3000:3000 nodeapp-prod:latest
-3. Jenkins CI/CD Pipeline
+Jenkins CI/CD Pipeline
 The Jenkinsfile automates the following phases:
-
 Build: Installs dependencies using npm ci for consistent builds.
+Push: Tags and uploads the versioned image jemimaht/nodeapp:${BUILD_NUMBER}.
+Deploy: Updates the EKS cluster deployment using kubectl set image + rollout status.
 
-Push: Tags and uploads the versioned image to jemimaht/k8s-jenkins-aws.
-
-Deploy: Updates the EKS cluster deployment using the latest build image.
-
-4. Kubernetes Configuration
+Kubernetes Configuration
 Deployment is managed via two primary manifests:
-
 deployment.yml: Manages the application lifecycle and replica count.
-
 deploymentservice.yml: Exposes the app via a LoadBalancer on Port 5000.
-
-Manual Commands:
-
-Bash
-
-kubectl apply -f deployment.yml
-kubectl apply -f deploymentservice.yml
-Repository Structure
-File	Description
-index.js	Express server logic with /, /will, and /ready endpoints.
-Jenkinsfile	Declarative pipeline-as-code for CI/CD automation.
-dockerfile	Optimized Docker build instructions (Node 24).
-deployment.yml	Kubernetes deployment manifest.
-deploymentservice.yml	Kubernetes service manifest (LoadBalancer).
-package.json	Project metadata and dependencies.
+Manual Commands: kubectl apply -f deployment.yml && kubectl apply -f deploymentservice.yml
 
 Author
 Jimmy96 T. DevOps & Cloud Specialist
